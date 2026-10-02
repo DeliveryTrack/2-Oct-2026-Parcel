@@ -1,1 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parcel Tracking System</title>
 
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter,Arial,sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:#f3f6fb;
+    color:#172033;
+}
+
+.header{
+    background:#111827;
+    color:white;
+    padding:22px 7%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.demo{
+    background:#f59e0b;
+    color:#111827;
+    padding:7px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.hero{
+    background:linear-gradient(135deg,#172554,#2563eb);
+    padding:65px 20px 95px;
+    text-align:center;
+    color:white;
+}
+
+.hero h1{
+    font-size:42px;
+    margin-bottom:12px;
+}
+
+.hero p{
+    opacity:.9;
+    margin-bottom:30px;
+}
+
+.search{
+    max-width:680px;
+    margin:auto;
+    background:white;
+    padding:8px;
+    border-radius:12px;
+    display:flex;
+    box-shadow:0 15px 40px rgba(0,0,0,.2);
+}
+
+.search input{
+    flex:1;
+    border:0;
+    outline:0;
+    padding:16px;
+    font-size:15px;
+    color:#111827;
+}
+
+.search button{
+    border:0;
+    background:#2563eb;
+    color:white;
+    padding:0 28px;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.container{
+    max-width:1000px;
+    margin:-50px auto 50px;
+    padding:0 18px;
+}
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 8px 30px rgba(15,23,42,.08);
+    margin-bottom:20px;
+}
+
+.result{
+    display:none;
+}
+
+.top{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:center;
+    border-bottom:1px solid #e5e7eb;
+    padding-bottom:22px;
+}
+
+.tracking{
+    color:#64748b;
+    font-size:13px;
+}
+
+.tracking strong{
+    display:block;
+    color:#111827;
+    font-size:20px;
+    margin-top:5px;
+}
+
+.status{
+    background:#dcfce7;
+    color:#15803d;
+    padding:9px 15px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:700;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+    margin-top:24px;
+}
+
+.info{
+    background:#f8fafc;
+    padding:18px;
+    border-radius:12px;
+}
+
+.info span{
+    display:block;
+    color:#64748b;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.info strong{
+    font-size:15px;
+    line-height:1.5;
+}
+
+.timeline{
+    margin-top:28px;
+    position:relative;
+}
+
+.timeline-item{
+    display:flex;
+    gap:16px;
+    padding-bottom:27px;
+    position:relative;
+}
+
+.timeline-item:last-child{
+    padding-bottom:0;
+}
+
+.dot{
+    width:14px;
+    height:14px;
+    background:#2563eb;
+    border-radius:50%;
+    margin-top:3px;
+    flex-shrink:0;
+    position:relative;
+    z-index:2;
+}
+
+.timeline-item:not(:last-child) .dot:after{
+    content:"";
+    position:absolute;
+    width:2px;
+    height:45px;
+    background:#dbeafe;
+    left:6px;
+    top:14px;
+}
+
+.event h4{
+    margin-bottom:5px;
+}
+
+.event p{
+    color:#64748b;
+    font-size:13px;
+}
+
+.error{
+    display:none;
+    max-width:680px;
+    margin:20px auto;
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:14px;
+    border-radius:10px;
+}
+
+.footer{
+    text-align:center;
+    padding:30px;
+    color:#64748b;
+    font-size:12px;
+}
+
+@media(max-width:650px){
+    .hero h1{font-size:30px}
+    .search{flex-direction:column;gap:8px}
+    .search button{padding:15px}
+    .grid{grid-template-columns:1fr}
+    .top{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">PARCEL<span style="color:#60a5fa">TRACK</span></div>
+    <div class="demo">DEMO SYSTEM</div>
+</header>
+
+<section class="hero">
+    <h1>Track Your Parcel</h1>
+    <p>Enter your tracking ID to view shipment details and current status.</p>
+
+    <div class="search">
+        <input id="trackingInput"
+               type="text"
+               placeholder="Enter Tracking ID e.g. PT20261002SHIBU">
+        <button onclick="trackParcel()">Track Parcel</button>
+    </div>
+
+    <div class="error" id="error">
+        Tracking ID not found. Please check the ID and try again.
+    </div>
+</section>
+
+<main class="container">
+
+<section class="card result" id="result">
+
+    <div class="top">
+        <div class="tracking">
+            TRACKING ID
+            <strong id="trackingId">PT20261002SHIBU</strong>
+        </div>
+
+        <div class="status">
+            ● In Transit
+        </div>
+    </div>
+
+    <div class="grid">
+
+        <div class="info">
+            <span>RECIPIENT NAME</span>
+            <strong>Shibu M. D.</strong>
+        </div>
+
+        <div class="info">
+            <span>MOBILE NUMBER</span>
+            <strong>+91 76769 96821</strong>
+        </div>
+
+        <div class="info">
+            <span>DELIVERY LOCATION</span>
+            <strong>Payattuvila</strong>
+        </div>
+
+        <div class="info">
+            <span>LANDMARK</span>
+            <strong>Near Payattuvila Milma Society</strong>
+        </div>
+
+        <div class="info" style="grid-column:1/-1">
+            <span>DELIVERY ADDRESS</span>
+            <strong>
+                Kuzhivila Puthen Veedu, Payattuvila,
+                Uchakada Side
+            </strong>
+        </div>
+
+    </div>
+
+    <h3 style="margin-top:30px">Shipment Progress</h3>
+
+    <div class="timeline">
+
+        <div class="timeline-item">
+            <div class="dot"></div>
+            <div class="event">
+                <h4>Shipment Information Received</h4>
+                <p>Parcel details have been registered in the system.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="dot"></div>
+            <div class="event">
+                <h4>Parcel Picked Up</h4>
+                <p>Shipment has been collected and is being processed.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="dot"></div>
+            <div class="event">
+                <h4>In Transit</h4>
+                <p>Parcel is currently moving towards the Genuine.</p>
+            </div>
+        </div>
+
+        <div class="timeline-item">
+            <div class="dot"></div>
+            <div class="event">
+                <h4>Out for Delivery</h4>
+                <p>Pending — parcel will be assigned for final delivery.</p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+    © 2026 ParcelTrack • This is a tracking interface.
+</footer>
+
+<script>
+const DEMO_TRACKING_ID = "PT20261002SHIBU";
+
+function trackParcel(){
+
+    const input = document
+        .getElementById("trackingInput")
+        .value
+        .trim()
+        .toUpperCase();
+
+    const result = document.getElementById("result");
+    const error = document.getElementById("error");
+
+    result.style.display = "none";
+    error.style.display = "none";
+
+    if(input === DEMO_TRACKING_ID){
+
+        document.getElementById("trackingId").textContent = input;
+
+        result.style.display = "block";
+
+        setTimeout(() => {
+            result.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+        },100);
+
+    }else{
+        error.style.display = "block";
+    }
+}
+
+document
+.getElementById("trackingInput")
+.addEventListener("keydown", function(e){
+    if(e.key === "Enter"){
+        trackParcel();
+    }
+});
+</script>
+
+</body>
+  </html>
